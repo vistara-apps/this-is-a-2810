@@ -17,14 +17,21 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
+        node-version: '20'
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        echo "Installing dependencies..."
+        npm ci
+        echo "Dependencies installed successfully"
 
     - name: Build application
-      run: npm run build
+      run: |
+        echo "Starting build process..."
+        npm run build
+        echo "Build completed successfully"
+        ls -la dist/
       env:
         NODE_OPTIONS: --max-old-space-size=4096
 
@@ -36,22 +43,24 @@ jobs:
         retention-days: 7
 
     - name: Deploy to Vercel (Production)
-      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && secrets.VERCEL_TOKEN != ''
+      if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && secrets.VERCEL_TOKEN
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-args: '--prod'
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
 
     - name: Deploy to Vercel (Preview)
-      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' && secrets.VERCEL_TOKEN != ''
+      if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' && secrets.VERCEL_TOKEN
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-args: '--no-wait'
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
 
     - name: Comment PR with build status
       if: github.event_name == 'pull_request'
@@ -72,9 +81,13 @@ jobs:
             message += `- \`VERCEL_PROJECT_ID\``;
           }
           
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: message
-          });
+          try {
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+          } catch (error) {
+            console.log('Error creating comment:', error);
+          }
