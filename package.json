@@ -15,7 +15,11 @@
     "lucide-react": "^0.263.1",
     "openai": "^4.0.0",
     "recharts": "^2.8.0",
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "@supabase/supabase-js": "^2.38.0",
+    "axios": "^1.6.0",
+    "html2canvas": "^1.4.1",
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

@@ -8,7 +8,7 @@ import {
   Search,
   Filter,
   Bookmark,
-  BookmarkCheck
+  Check
 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -148,7 +148,7 @@ const TrendDiscovery = () => {
                   className="p-1.5 bg-black/50 rounded-full hover:bg-black/70 transition-colors"
                 >
                   {savedTrends.has(trend.trendId) ? (
-                    <BookmarkCheck className="h-4 w-4 text-accent" />
+                    <Check className="h-4 w-4 text-accent" />
                   ) : (
                     <Bookmark className="h-4 w-4 text-white" />
                   )}
